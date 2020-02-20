@@ -10,7 +10,7 @@ This program is split into two parts and is dependent on data formatted a certai
 The data (training, validation, and testing) must all be formatted in separate files as follows:
 
 ```
-	<class>\t<word1> <word2> ... <wordN>\n
+<class>\t<word1> <word2> ... <wordN>\n
 ```
 
 where the class is either 0 or 1, and the words are any tokens without spaces.
@@ -25,7 +25,7 @@ Example:
  * This program also relies on having an indexed dictionary which defines which words should be considered features. This should be formatted as follows:
 
 ```
-	<word> <index>
+<word> <index>
 ```
 
 where the word is any token with a space and the index is a non-negative integer value.
