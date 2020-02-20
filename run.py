@@ -18,8 +18,19 @@ import sys
 print('\nChecking arguments...')
 if len(sys.argv) < 5: # incorrect amount
 	print('Invalid arguments. Please run as follows:')
-	print('python3 run.py <data_name> <dict_input> <num_epoch>\n')
+	print('python3 run.py <data_name> <dict_input> <feature_flag> <num_epoch>\n')
 	sys.exit()
+
+# create directories if non-existent
+try:
+	os.mkdir('input')
+except FileExistsError: pass
+try:
+	os.mkdir('formatted')
+except FileExistsError: pass
+try:
+	os.mkdir('output')
+except FileExistsError: pass
 
 # run feature.py
 print('Running feature.py...')
