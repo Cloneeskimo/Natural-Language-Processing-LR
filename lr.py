@@ -67,24 +67,29 @@ def dotProduct(parameters, positiveFeatures):
 	return dotProduct
 
 # classifies a given sample using the given parameters
-def classify(parameters, sample):
+def classify(parameters, sample, output = None):
 	tokens = sample.split('\t') # split data into tokens
 	tokens.pop(0) # remove correct classification at beginning
 	positiveFeatures = [0] # add positive features to a single array (start with idx 0 always for bias term)
 	for token in tokens: # loop through tokens to get positive features
 		if token[len(token) - 1] == '1': positiveFeatures.append(token[:-2])
 	expdp = math.exp(-dotProduct(parameters, positiveFeatures)) # get e^theta T x
-	if 1/(1 + expdp) >= 0.5: return 1 # return according to bernoulli
+	yhat = 1/(1 + expdp)
+	if yhat >= 0.5:
+		if output != None: output.write('[' + str((0.5 - (yhat - 0.5)) / 0.5) + ']: ')
+		return 1 # return according to bernoulli
+	if output != None: output.write('[' + str((0.5 - yhat) / 0.5) + ']: ')
 	return 0
 
 # classifies a dataset using the given parameters, writes the classifications to the given output location and returns the error
 # if outputLocation is None, does not output classification
-def classifyData(parameters, data, outputLocation = None):
+def classifyData(parameters, data, outputLocation = None, writeConfidence = False):
 	if outputLocation != None: fileOut = open(outputLocation, 'w')
 	incorrectPredictions = 0
 	for sample in data:
 		y = int(sample[0]) # get correct answer
-		yhat = classify(parameters, sample) # classify
+		if writeConfidence: yhat = classify(parameters, sample, fileOut) # classify
+		else: yhat = classify(parameters, sample) # classify
 		if outputLocation != None: fileOut.write(str(yhat) + '\n')
 		if yhat != y: incorrectPredictions += 1 # check if correct classification
 	if outputLocation != None: fileOut.close()
@@ -105,7 +110,7 @@ for i in range(0, int(sys.argv[8])):
 		tokens = trainExample.split('\t') # split data into tokens
 		y = int(tokens.pop(0)) # correct classification
 		positiveFeatures = [0] # add positive features to a single array (start with idx 0 always for bias term)
-		for token in tokens: 
+		for token in tokens:
 			if token[len(token) - 1] == '1': positiveFeatures.append(token[:-2])
 		expdp = math.exp(dotProduct(parameters, positiveFeatures)) # get e^theta T x
 		update = y - (expdp / (1 + expdp)) # calculate update
@@ -114,7 +119,7 @@ for i in range(0, int(sys.argv[8])):
 
 	# print validation error after each epoch
 	print('Validation error: ' + str(classifyData(parameters, validationData)))
-		
+
 # classify training data and calculate training error
 print('Classifying training data...')
 trainError = classifyData(parameters, trainData, sys.argv[5])
@@ -127,7 +132,7 @@ fileIn.close()
 
 # classify test data and calculate test error
 print('Classifying test data...')
-testError = classifyData(parameters, testData, sys.argv[6])
+testError = classifyData(parameters, testData, sys.argv[6], True)
 
 # record metrics
 print('Recording metrics...')
