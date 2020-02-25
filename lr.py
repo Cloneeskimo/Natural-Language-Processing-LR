@@ -76,7 +76,7 @@ def classify(parameters, sample, output = None):
 	expdp = math.exp(-dotProduct(parameters, positiveFeatures)) # get e^theta T x
 	yhat = 1/(1 + expdp)
 	if yhat >= 0.5:
-		if output != None: output.write('[' + str((0.5 - (yhat - 0.5)) / 0.5) + ']: ')
+		if output != None: output.write('[' + str(1 - ((1.0 - yhat) / 0.5)) + ']: ')
 		return 1 # return according to bernoulli
 	if output != None: output.write('[' + str((0.5 - yhat) / 0.5) + ']: ')
 	return 0
